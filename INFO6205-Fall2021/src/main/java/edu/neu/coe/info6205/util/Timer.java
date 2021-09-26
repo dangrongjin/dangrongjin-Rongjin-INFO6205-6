@@ -30,6 +30,20 @@ public class Timer {
         return meanLapTime();
     }
 
+
+//    public <T> double repeat(int n,T t,Consumer<T> function) {
+//        for (int i = 0; i < n; i++) {
+//            function.accept(t);
+//            lap();
+//        }
+//        pause();
+//
+//        double res = meanLapTime();
+//        this.ticks = 0;
+//        this.laps = 0;
+//        return res;
+//    }
+
     /**
      * Run the given functions n times, once per "lap" and then return the result of calling stop().
      *
@@ -41,6 +55,9 @@ public class Timer {
     public <T, U> double repeat(int n, Supplier<T> supplier, Function<T, U> function) {
         return repeat(n, supplier, function, null, null);
     }
+
+
+
 
     /**
      * Pause (without counting a lap); run the given functions n times while being timed, i.e. once per "lap", and finally return the result of calling meanLapTime().
@@ -55,7 +72,27 @@ public class Timer {
     public <T, U> double repeat(int n, Supplier<T> supplier, Function<T, U> function, UnaryOperator<T> preFunction, Consumer<U> postFunction) {
         logger.trace("repeat: with " + n + " runs");
         // TO BE IMPLEMENTED: note that the timer is running when this method is called and should still be running when it returns.
-        return 0;
+        pause();
+        for (int i = 0; i < n; i++) {
+            T sup =supplier.get();
+            if (preFunction != null ){
+                preFunction.apply(sup);
+            }
+
+            resume();
+            U fun = function.apply(sup);
+            pauseAndLap();
+
+            if(postFunction != null){
+                postFunction.accept(fun);
+            }
+        }
+
+        double res = meanLapTime();
+        this.ticks = 0;
+        this.laps = 0;
+
+        return res;
     }
 
     /**
@@ -174,7 +211,7 @@ public class Timer {
      */
     private static long getClock() {
         // TO BE IMPLEMENTED
-        return 0;
+        return  System.nanoTime();
     }
 
     /**
@@ -185,8 +222,10 @@ public class Timer {
      * @return the corresponding number of milliseconds.
      */
     private static double toMillisecs(long ticks) {
-        // TO BE IMPLEMENTED
-        return 0;
+        Double toMillTime = Double.valueOf(ticks/1000000);
+        return toMillTime;
+
+//        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     final static LazyLogger logger = new LazyLogger(Timer.class);
