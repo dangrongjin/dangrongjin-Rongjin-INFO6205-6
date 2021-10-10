@@ -11,8 +11,8 @@ public class TestUF {
 
     public static void main(String[] args) {
 
-        for (int i = 20; i < 81921; i=i*2) {
-            System.out.println(count(i));
+        for (int i = 20; i < 1600001; i=i*2) {
+            System.out.println("n："+ i +"    count:"+count(i));
         }
 
 
